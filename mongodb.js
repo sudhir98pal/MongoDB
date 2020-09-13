@@ -147,7 +147,29 @@ MongoClient.connect(connectionUrl, { useNewUrlParser: true, useUnifiedTopology: 
 
 
 
-db.collection('users').updateMany()
+db.collection('users').updateMany
+(
+    {
+            name : "Sudhir Pal"
+
+    },
+    {
+        $set:
+        {
+           
+                       age:"23"
+                       
+        }
+    },
+
+).then((result)=>
+{
+    console.log(result);
+}).catch((error)=>
+{
+    console.log(error)
+})
+
 
  }
  );
