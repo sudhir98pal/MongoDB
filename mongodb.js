@@ -147,29 +147,60 @@ MongoClient.connect(connectionUrl, { useNewUrlParser: true, useUnifiedTopology: 
 
 
 
-db.collection('users').updateMany
-(
-    {
-            name : "Sudhir Pal"
+// db.collection('users').updateMany
+// (
+//     {
+//             name : "Sudhir Pal"
 
-    },
-    {
-        $set:
-        {
+//     },
+//     {
+//         $set:
+//         {
            
-                       age:"23"
+//                        age:"22"
                        
-        }
-    },
+//         }
+//     },
+
+// ).then((result)=>
+// {
+//     console.log(result.modifiedCount);
+// }).catch((error)=>
+// {
+//     console.log(error)
+// })
+
+
+//DELETE
+
+// db.collection('users').deleteMany(
+//     {
+//         age: "14"
+//     }
+// ).then((result)=>
+// {
+//     console.log(result.deletedCount);
+// }).catch((error)=>
+// {
+//     console.log('Unable to delete')
+// })
+
+
+db.collection('fruits').deleteOne(
+    {
+       
+        _id :new ObjectID("5f5737cb4d8fb8046c51d368")
+       
+    }
 
 ).then((result)=>
 {
-    console.log(result);
-}).catch((error)=>
-{
-    console.log(error)
+    console.log(result.deletedCount);
 })
-
+.catch((error)=>
+{
+console.log(error);
+})
 
  }
  );
