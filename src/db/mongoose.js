@@ -1,5 +1,6 @@
 
 const chalk=require('chalk');
+const validator=require('validator');
 
 console.log(chalk.cyanBright.bold('-------Mongoose-----'));
 
@@ -23,6 +24,7 @@ const User=mongoose.model('User',
     {
 type:String,
 require:true,
+trim:true,// it is used to trim the trailing space from the end of the string
 validate(name)
 {
     if(name.length<=1)
@@ -42,7 +44,23 @@ if(age<=0)
     throw new Error('Please provide valide age')
 }
 }
+    },
+    email:
+    {
+        type:String,
+        require:true,
+        trim:true,
+        lowercase:true,
+        validate(email)
+        {
+            if(!validator.isEmail(email))
+            {
+throw new Error('Please Provide Valid Email Addresh');
+return;
+            }
+        }
     }
+
 })
 
 // const task=mongoose.model(
@@ -50,12 +68,14 @@ if(age<=0)
 //             {
 //                 name:
 //                 {
-//                      type:String
+//                      type:String,
+                        // trim:true
 
 //                 },
 //                 description:
 //                 {
-//                     type:String
+//                     type:String,
+//trim:true
 //                 }
 //             }
 
@@ -72,14 +92,14 @@ if(age<=0)
   
 // })
 
-const newuser=new User({name:'Nandlal pal',age:56});
-newuser.save().then((myself)=>
-{
-    console.log(myself);
-    // myself is a varible you change its name to other like result 
+// const newuser=new User({name:'Ram',age:23,email:'ramu@xxx.gmail.com'});
+// newuser.save().then((myself)=>
+// {
+//     console.log(myself);
+//     // myself is a varible you change its name to other like result 
 
-}).catch((error)=>
-{
-console.log('Error '+error);
-})
+// }).catch((error)=>
+// {
+// console.log('Error '+error);
+// })
 
