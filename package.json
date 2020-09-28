@@ -1,0 +1,27 @@
+{
+  "name": "taskmanager",
+  "version": "1.0.0",
+  "description": "",
+  "main": "mongodb.js",
+  "dependencies": {
+    "chalk": "^4.1.0",
+    "express": "^4.17.1",
+    "mongodb": "^3.6.1",
+    "mongoose": "^5.10.5",
+    "validator": "^13.1.17"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "start": "node src/startingpoint.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sudhir98pal/MongoDB.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/sudhir98pal/MongoDB/issues"
+  },
+  "homepage": "https://github.com/sudhir98pal/MongoDB#readme"
+}
