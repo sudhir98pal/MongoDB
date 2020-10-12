@@ -186,21 +186,7 @@ MongoClient.connect(connectionUrl, { useNewUrlParser: true, useUnifiedTopology: 
 // })
 
 
-db.collection('fruits').deleteOne(
-    {
-       
-        _id :new ObjectID("5f5737cb4d8fb8046c51d368")
-       
-    }
 
-).then((result)=>
-{
-    console.log(result.deletedCount);
-})
-.catch((error)=>
-{
-console.log(error);
-})
 
  }
  );
