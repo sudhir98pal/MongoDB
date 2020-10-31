@@ -66,7 +66,7 @@ throw new Error('Please Provide Valid Email Addresh');
             {
                 if(pass.includes("password"))
                 {
-                        throw new Error('Your Password is Invalid it contains key Password itself');
+                        throw new Error('Your Password is Invalid as it constains substring password');
                 }
                 else{
 

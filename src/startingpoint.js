@@ -1,8 +1,15 @@
 const express = require('express')
-console.log("sudhir");
+const chalk=require('chalk');
+console.log(chalk.cyanBright.underline("---Sudhir Pal ----"));
 require('./db/mongoose')
 // it is required so that we can connect to database
 // as connection to db is done in mongoose.js
+/* **********NOTE****************
+        create - POST
+        read - GET
+        update - PATCH/PUT
+        delete - DELETE
+*/
 
 
 const User = require('./models/User')
@@ -12,8 +19,10 @@ const app = express();
 const port = process.env.PORT || 3000
 app.use(express.json())
 // it allows to use incoming req in json
-app.listen(port, () => {
-    console.log('Server is on Port number ' + port)
+
+app.listen(port, () => 
+{
+    console.log(chalk.greenBright('Server is on Port number ' + port))
 })
 
 // NOTE async function always return promise instead of undefined
@@ -144,14 +153,14 @@ try
     const task=await Task.findById(IdToBeSearched);
     if (!task) 
     {
-               return res.status(404).send()
+                res.status(404).send()
     }
     res.send(task)
 
 }
 catch(e)
 {
-    res.status(500).send(error);
+    res.status(500).send(e);
 }
 
     // Task.findById(IdToBeSearched).then((task) => 
@@ -165,4 +174,46 @@ catch(e)
     // }).catch((error) => {
     //     res.status(500).send(error);
     // })
+})
+
+
+
+app.patch('/users/:id',async (req,res)=>
+{
+
+    try
+    {
+const user= await User.findByIdAndUpdate(req.params.id,req.body,{new:true,runValidators:true})
+// {new:true} is used to return updated data instead of old data which is to be updated
+if(!user) // no user with id were present
+{
+
+    return res.status(404).send("No such User Exists");
+}
+
+res.send(user)
+    }catch(e)
+    {
+        res.status(400).send(e);
+    }
+})
+
+app.patch('/tasks/:id',async (req,res)=>
+{
+
+    try
+    {
+const task= await Task.findByIdAndUpdate(req.params.id,req.body,{new:true,runValidators:true})
+// {new:true} is used to return updated data instead of old data which is to be updated
+if(!task) // no Task with id were present
+{
+
+    return res.status(404).send("No Such Task Exists");
+}
+
+res.send(task)
+    }catch(e)
+    {
+        res.status(400).send(e);
+    }
 })
