@@ -1,5 +1,5 @@
 const express = require('express')
-const chalk=require('chalk');
+const chalk = require('chalk');
 console.log(chalk.cyanBright.underline("---Sudhir Pal ----"));
 require('./db/mongoose')
 // it is required so that we can connect to database
@@ -14,20 +14,20 @@ require('./db/mongoose')
 
 const User = require('./models/User')
 const Task = require('./models/task');
-const { findById } = require('./models/User');
+const { findById, update } = require('./models/User');
 const app = express();
 const port = process.env.PORT || 3000
 app.use(express.json())
 // it allows to use incoming req in json
 
-app.listen(port, () => 
-{
+app.listen(port, () => {
     console.log(chalk.greenBright('Server is on Port number ' + port))
 })
 
 // NOTE async function always return promise instead of undefined
 app.post('/users', async (req, res) => {
     const newUser = new User(req.body);
+
     try {
         await newUser.save();
         res.status(201).send(newUser)
@@ -37,19 +37,6 @@ app.post('/users', async (req, res) => {
     }
 
 
-
-
-    // newUser.save().then(() => 
-    // {
-    //     // status 201 => created
-    //     res.send(newUser);
-    //     // user is a varible you change its name to other like result 
-
-    // }).catch((error) => {
-    //     res.status(400)
-    //     // staus need to be called before send ,so that status can be set properly.
-    //     res.send(error.message)
-    // })
 
 
 })
@@ -64,156 +51,120 @@ app.post('/tasks', async (req, res) => {
         res.status(400).send(e);
 
     }
-    // newTask.save().then(() => {  // status 201 => created
-    //     res.status(201).send(newTask);
-    //     // user is a varible you change its name to other like result 
 
-    // }).catch((error) => {
-    //     res.status(400)
-    //     // staus need to be called before send ,so that status can be set properly.
-    //     res.send(error.message)
-    // })
 
 
 })
 
 app.get('/users', async (req, res) => {
 
-    try
-    {
-       const users=await User.find({});
+    try {
+        const users = await User.find({});
         res.status(201).send(users);
     }
-    catch(e)
-    {
+    catch (e) {
 
         res.status(500).send(e);
     }
 
-    //    const user=User.find({}).then((users) => {
-    //         res.send(users);
-    //     }).catch
-    //         ((error) => {
-    //             res.status(500).send(error);
-    //         })
 
 })
 
-app.get('/users/:id', async (req, res) => 
-{
+app.get('/users/:id', async (req, res) => {
     const IdToBeSearched = req.params.id;
-    try{
-        const user=await User.findById(IdToBeSearched);
+    try {
+        const user = await User.findById(IdToBeSearched);
         if (!user) {
-          return res.status(404).send()
-            }
+            return res.status(404).send()
+        }
         res.status(201).send(user);
     }
-    catch(e)
-    {
+    catch (e) {
         return res.status(400).send(e)
     }
-    
 
-    // User.findById(IdToBeSearched).then((user) => {
 
-    //     if (!user) {
-    //         return res.status(404).send()
-    //     }
-
-    //     res.send(user)
-    // }).catch((error) => {
-    //     res.status(500).send(error);
-    // })
 })
 
 
 
 
-app.get('/tasks', async (req, res) => 
-{
-    try{
-        const task=await Task.find({});
+app.get('/tasks', async (req, res) => {
+    try {
+        const task = await Task.find({});
         res.status(201).send(task);
     }
-    catch(e)
-    {
+    catch (e) {
         res.status(500).send(e);
     }
-   
+
 
 })
 
 
-app.get('/tasks/:id',async (req, res) => 
-{
+app.get('/tasks/:id', async (req, res) => {
     const IdToBeSearched = req.params.id;
-try
-{
-    const task=await Task.findById(IdToBeSearched);
-    if (!task) 
-    {
-                res.status(404).send()
+    try {
+        const task = await Task.findById(IdToBeSearched);
+        if (!task) {
+            res.status(404).send()
+        }
+        res.send(task)
+
     }
-    res.send(task)
+    catch (e) {
+        res.status(500).send(e);
+    }
 
-}
-catch(e)
-{
-    res.status(500).send(e);
-}
-
-    // Task.findById(IdToBeSearched).then((task) => 
-    // {
-
-    //     if (!task) {
-    //         return res.status(404).send()
-    //     }
-
-    //     res.send(task)
-    // }).catch((error) => {
-    //     res.status(500).send(error);
-    // })
 })
 
 
 
-app.patch('/users/:id',async (req,res)=>
-{
+app.patch('/users/:id', async (req, res) => {
+    const updates = Object.keys(req.body);
+    const allowedUpadtes = ['name', 'age', 'email', 'password'];
+    const isValidOperationForUpdate = updates.every((update) => allowedUpadtes.includes(update));
 
-    try
-    {
-const user= await User.findByIdAndUpdate(req.params.id,req.body,{new:true,runValidators:true})
-// {new:true} is used to return updated data instead of old data which is to be updated
-if(!user) // no user with id were present
-{
+    try {
+        const user = await User.findById(req.params.id);
+        // not using findByIdAndUpdate becuse we first nees to access user model where user model hash the 
+        // password first then save
 
-    return res.status(404).send("No such User Exists");
-}
+        updates.forEach((update) => {
+            user[update] = req.body[update]
 
-res.send(user)
-    }catch(e)
-    {
+        })
+
+        await user.save();
+
+
+        //const user= await User.findByIdAndUpdate(req.params.id,req.body,{new:true,runValidators:true})
+        // {new:true} is used to return updated data instead of old data which is to be updated
+        if (!user) // no user with id were present
+        {
+
+            return res.status(404).send("No such User Exists");
+        }
+
+        res.send(user)
+    } catch (e) {
         res.status(400).send(e);
     }
 })
 
-app.patch('/tasks/:id',async (req,res)=>
-{
+app.patch('/tasks/:id', async (req, res) => {
 
-    try
-    {
-const task= await Task.findByIdAndUpdate(req.params.id,req.body,{new:true,runValidators:true})
-// {new:true} is used to return updated data instead of old data which is to be updated
-if(!task) // no Task with id were present
-{
+    try {
+        const task = await Task.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true })
+        // {new:true} is used to return updated data instead of old data which is to be updated
+        if (!task) // no Task with id were present
+        {
 
-    return res.status(404).send("No Such Task Exists");
-}
+            return res.status(404).send("No Such Task Exists");
+        }
 
-res.send(task)
-    }catch(e)
-    {
+        res.send(task)
+    } catch (e) {
         res.status(400).send(e);
     }
 })
